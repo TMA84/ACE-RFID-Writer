@@ -108,6 +108,20 @@ function getPayload() {
   };
 }
 
+// --- Clear form ---
+function clearForm() {
+  fields.brand.value       = '';
+  fields.sku.value         = '';
+  fields.material.value    = '';
+  fields.weight.value      = '1000';
+  fields.extruderMin.value = '';
+  fields.extruderMax.value = '';
+  fields.bedMin.value      = '';
+  fields.bedMax.value      = '';
+  fields.colorPicker.value = '#ffffff';
+  fields.colorHex.value    = '';
+}
+
 // --- Populate form ---
 function populateForm(data) {
   fields.brand.value       = data.brand       ?? '';
@@ -138,7 +152,7 @@ function handleEvent(msg) {
     case 'reader_connected':    setReaderStatus(true, msg.name);      break;
     case 'reader_disconnected': setReaderStatus(false);                break;
     case 'tag_detected':        setTagStatus(true, msg.uid);           break;
-    case 'tag_removed':         setTagStatus(false);                   break;
+    case 'tag_removed':         setTagStatus(false); clearForm();       break;
     case 'tag_data':            populateForm(msg.fields); showToast('Tag gelesen'); break;
     case 'write_success':       showToast('Tag erfolgreich beschrieben'); break;
     case 'error':               showToast(msg.message, 'error');       break;
