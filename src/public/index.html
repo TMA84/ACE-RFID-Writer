@@ -27,8 +27,29 @@
       <section>
         <h2>Filament</h2>
         <div class="field-row">
-          <label for="brand">Hersteller</label>
-          <input id="brand" type="text" placeholder="z.B. Bambu Lab" maxlength="20">
+          <label for="brandSelect">Hersteller</label>
+          <select id="brandSelect">
+            <option value="">— wählen —</option>
+            <option>Bambu Lab</option>
+            <option>Prusament</option>
+            <option>eSUN</option>
+            <option>Polymaker</option>
+            <option>Hatchbox</option>
+            <option>Sunlu</option>
+            <option>Overture</option>
+            <option>ColorFabb</option>
+            <option>Extrudr</option>
+            <option>Das Filament</option>
+            <option>FormFutura</option>
+            <option>Filamentum</option>
+            <option>3DJake</option>
+            <option>Anycubic</option>
+            <option value="__custom__">Sonstiger…</option>
+          </select>
+        </div>
+        <div class="field-row" id="brandCustomRow" style="display:none">
+          <label for="brandCustom">Hersteller (Text)</label>
+          <input id="brandCustom" type="text" placeholder="Hersteller eingeben" maxlength="20">
         </div>
         <div class="field-row">
           <label for="material">Material</label>
