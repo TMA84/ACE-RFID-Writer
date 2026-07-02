@@ -2,6 +2,17 @@
 
 let materialTemps = {};
 
+const BRANDS = [
+  '3DJake','3DXTech','Amolen','Anycubic','Atomic Filament','Bambu Lab',
+  'ColorFabb','Creality','Das Filament','Devil Design','Dremel','Elegoo',
+  'Eryone','eSUN','Extrudr','Fiberlogy','Filamentum','Fillamentum',
+  'Flashforge','FormFutura','Geeetech','Hatchbox','ICE Filaments','Inland',
+  'Kimya','Kingroon','MakerBot','MatterHackers','NinjaTek','Overture',
+  'Polymaker','PolyTerra','PrimaCreator','Proto-pasta','Prusament',
+  'Raise3D','Real Filament','Recreus','Rigid.ink','Sakata3D','Spectrum',
+  'Sunlu','Ultimaker','Verbatim','Voxelab','XYZprinting','ZIRO','Zortrax',
+];
+
 // --- DOM ---
 const readerDot   = document.getElementById('readerDot');
 const readerLabel = document.getElementById('readerLabel');
@@ -79,6 +90,61 @@ fields.colorHex.addEventListener('input', () => {
     fields.colorPicker.value = hex.toLowerCase();
   }
 });
+
+// --- Brand autocomplete ---
+(function () {
+  const input    = fields.brand;
+  const dropdown = document.getElementById('brandDropdown');
+  let activeIdx  = -1;
+
+  function show(items) {
+    dropdown.innerHTML = '';
+    activeIdx = -1;
+    if (!items.length) { dropdown.classList.add('hidden'); return; }
+    items.forEach((name, i) => {
+      const li = document.createElement('li');
+      li.textContent = name;
+      li.addEventListener('mousedown', e => { e.preventDefault(); select(name); });
+      dropdown.appendChild(li);
+    });
+    dropdown.classList.remove('hidden');
+  }
+
+  function hide() { dropdown.classList.add('hidden'); activeIdx = -1; }
+
+  function select(name) { input.value = name; hide(); }
+
+  function setActive(idx) {
+    const items = dropdown.querySelectorAll('li');
+    items.forEach(li => li.classList.remove('active'));
+    if (idx >= 0 && idx < items.length) {
+      items[idx].classList.add('active');
+      items[idx].scrollIntoView({ block: 'nearest' });
+      activeIdx = idx;
+    }
+  }
+
+  input.addEventListener('input', () => {
+    const q = input.value.toLowerCase();
+    if (!q) { show(BRANDS); return; }
+    show(BRANDS.filter(b => b.toLowerCase().includes(q)));
+  });
+
+  input.addEventListener('focus', () => {
+    const q = input.value.toLowerCase();
+    show(q ? BRANDS.filter(b => b.toLowerCase().includes(q)) : BRANDS);
+  });
+
+  input.addEventListener('blur', () => setTimeout(hide, 150));
+
+  input.addEventListener('keydown', e => {
+    const items = dropdown.querySelectorAll('li');
+    if (e.key === 'ArrowDown')  { e.preventDefault(); setActive(Math.min(activeIdx + 1, items.length - 1)); }
+    if (e.key === 'ArrowUp')    { e.preventDefault(); setActive(Math.max(activeIdx - 1, 0)); }
+    if (e.key === 'Enter' && activeIdx >= 0) { e.preventDefault(); select(items[activeIdx].textContent); }
+    if (e.key === 'Escape')     { hide(); }
+  });
+})();
 
 // --- Material auto-fill ---
 fields.material.addEventListener('change', () => {

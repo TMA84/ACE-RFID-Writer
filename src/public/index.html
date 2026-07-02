@@ -28,57 +28,10 @@
         <h2>Filament</h2>
         <div class="field-row">
           <label for="brand">Hersteller</label>
-          <input id="brand" type="text" list="brandList" placeholder="Suchen oder eingeben…" maxlength="20" autocomplete="off">
-          <datalist id="brandList">
-            <option>3DJake</option>
-            <option>3DXTech</option>
-            <option>Amolen</option>
-            <option>Anycubic</option>
-            <option>Atomic Filament</option>
-            <option>Bambu Lab</option>
-            <option>ColorFabb</option>
-            <option>Creality</option>
-            <option>Das Filament</option>
-            <option>Devil Design</option>
-            <option>Dremel</option>
-            <option>Elegoo</option>
-            <option>Eryone</option>
-            <option>eSUN</option>
-            <option>Extrudr</option>
-            <option>Fiberlogy</option>
-            <option>Filamentum</option>
-            <option>Fillamentum</option>
-            <option>Flashforge</option>
-            <option>FormFutura</option>
-            <option>Geeetech</option>
-            <option>Hatchbox</option>
-            <option>ICE Filaments</option>
-            <option>Inland</option>
-            <option>Kimya</option>
-            <option>Kingroon</option>
-            <option>MakerBot</option>
-            <option>MatterHackers</option>
-            <option>NinjaTek</option>
-            <option>Overture</option>
-            <option>Polymaker</option>
-            <option>PolyTerra</option>
-            <option>PrimaCreator</option>
-            <option>Proto-pasta</option>
-            <option>Prusament</option>
-            <option>Raise3D</option>
-            <option>Real Filament</option>
-            <option>Recreus</option>
-            <option>Rigid.ink</option>
-            <option>Sakata3D</option>
-            <option>Spectrum</option>
-            <option>Sunlu</option>
-            <option>Ultimaker</option>
-            <option>Verbatim</option>
-            <option>Voxelab</option>
-            <option>XYZprinting</option>
-            <option>ZIRO</option>
-            <option>Zortrax</option>
-          </datalist>
+          <div class="autocomplete-wrap">
+            <input id="brand" type="text" placeholder="Suchen oder eingeben…" maxlength="20" autocomplete="off">
+            <ul id="brandDropdown" class="autocomplete-list hidden"></ul>
+          </div>
         </div>
         <div class="field-row">
           <label for="material">Material</label>
