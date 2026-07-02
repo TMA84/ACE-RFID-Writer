@@ -23,7 +23,8 @@
     "productName": "ACE RFID Writer",
     "mac": {
       "category": "public.app-category.utilities",
-      "target": "dmg"
+      "target": "dmg",
+      "icon": "build/icon.icns"
     },
     "files": [
       "main.js",
