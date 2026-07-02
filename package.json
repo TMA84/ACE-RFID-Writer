@@ -1,18 +1,35 @@
 {
   "name": "ace-rfid-writer",
   "version": "1.0.0",
-  "description": "Web app for programming Anycubic ACE filament RFID tags via ACR122U",
-  "main": "src/server.js",
+  "description": "Anycubic ACE filament RFID tag writer",
+  "main": "main.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "rebuild": "electron-rebuild -f -w nfc-pcsc",
+    "postinstall": "electron-rebuild -f -w nfc-pcsc"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "nfc-pcsc": "^0.8.0",
-    "ws": "^8.14.2"
+    "nfc-pcsc": "^0.8.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "@electron/rebuild": "^3.4.0",
+    "electron": "^29.0.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.ace-rfid-writer",
+    "productName": "ACE RFID Writer",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": "dmg"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/tagFormat.js",
+      "src/public/**"
+    ]
   }
 }

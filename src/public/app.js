@@ -1,9 +1,6 @@
 'use strict';
 
 let materialTemps = {};
-let ws = null;
-let tagPresent = false;
-let readerReady = false;
 
 // --- DOM ---
 const readerDot   = document.getElementById('readerDot');
@@ -31,33 +28,36 @@ const fields = {
 let toastTimer = null;
 function showToast(msg, type = 'success') {
   toast.textContent = msg;
-  toast.className = `toast ${type}`;
+  toast.className   = `toast ${type}`;
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { toast.className = 'toast hidden'; }, 3000);
 }
 
 // --- Status ---
+let readerReady = false;
+let tagPresent  = false;
+
 function setReaderStatus(connected, name = '') {
-  readerReady = connected;
-  readerDot.className = 'dot' + (connected ? ' connected' : '');
+  readerReady           = connected;
+  readerDot.className   = 'dot' + (connected ? ' connected' : '');
   readerLabel.textContent = connected ? name : 'Reader nicht verbunden';
   updateButtons();
 }
 
 function setTagStatus(present, uid = '') {
-  tagPresent = present;
-  tagDot.className = 'dot' + (present ? ' tag-active' : '');
-  tagLabel.textContent = present ? `Tag: ${uid}` : 'Kein Tag';
+  tagPresent            = present;
+  tagDot.className      = 'dot' + (present ? ' tag-active' : '');
+  tagLabel.textContent  = present ? `Tag: ${uid}` : 'Kein Tag';
   updateButtons();
 }
 
 function updateButtons() {
-  const canAct = readerReady && tagPresent;
+  const canAct  = readerReady && tagPresent;
   btnRead.disabled  = !canAct;
   btnWrite.disabled = !canAct;
 }
 
-// --- Color sync ---
+// --- Color ---
 function hexToRgb(hex) {
   const m = hex.replace('#', '').match(/.{2}/g);
   if (!m || m.length < 3) return null;
@@ -108,7 +108,7 @@ function getPayload() {
   };
 }
 
-// --- Populate form from tag data ---
+// --- Populate form ---
 function populateForm(data) {
   fields.brand.value       = data.brand       ?? '';
   fields.sku.value         = data.sku         ?? '';
@@ -132,56 +132,22 @@ function populateForm(data) {
   }
 }
 
-// --- WebSocket ---
-function connect() {
-  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  ws = new WebSocket(`${proto}//${location.host}`);
-
-  ws.addEventListener('open', () => console.log('WS connected'));
-
-  ws.addEventListener('message', ev => {
-    let msg;
-    try { msg = JSON.parse(ev.data); } catch { return; }
-
-    switch (msg.type) {
-      case 'reader_connected':
-        setReaderStatus(true, msg.name);
-        break;
-      case 'reader_disconnected':
-        setReaderStatus(false);
-        setTagStatus(false);
-        break;
-      case 'tag_detected':
-        setTagStatus(true, msg.uid);
-        break;
-      case 'tag_removed':
-        setTagStatus(false);
-        break;
-      case 'tag_data':
-        populateForm(msg.fields);
-        showToast('Tag gelesen', 'success');
-        break;
-      case 'write_success':
-        showToast('Tag erfolgreich beschrieben', 'success');
-        break;
-      case 'error':
-        showToast(msg.message, 'error');
-        break;
-    }
-  });
-
-  ws.addEventListener('close', () => {
-    setReaderStatus(false);
-    setTagStatus(false);
-    setTimeout(connect, 3000); // auto-reconnect
-  });
-
-  ws.addEventListener('error', () => ws.close());
+// --- IPC event handler ---
+function handleEvent(msg) {
+  switch (msg.type) {
+    case 'reader_connected':    setReaderStatus(true, msg.name);      break;
+    case 'reader_disconnected': setReaderStatus(false);                break;
+    case 'tag_detected':        setTagStatus(true, msg.uid);           break;
+    case 'tag_removed':         setTagStatus(false);                   break;
+    case 'tag_data':            populateForm(msg.fields); showToast('Tag gelesen'); break;
+    case 'write_success':       showToast('Tag erfolgreich beschrieben'); break;
+    case 'error':               showToast(msg.message, 'error');       break;
+  }
 }
 
 // --- Buttons ---
 btnRead.addEventListener('click', () => {
-  ws.send(JSON.stringify({ action: 'read' }));
+  window.electronNFC.send('read');
 });
 
 btnWrite.addEventListener('click', () => {
@@ -190,19 +156,18 @@ btnWrite.addEventListener('click', () => {
     showToast('Bitte Material wählen', 'error');
     return;
   }
-  ws.send(JSON.stringify({ action: 'write', fields: payload }));
+  window.electronNFC.send('write', { fields: payload });
 });
 
 // --- Init ---
 async function init() {
   try {
-    const res  = await fetch('/api/config');
-    const conf = await res.json();
+    const conf  = await window.electronNFC.getConfig();
     materialTemps = conf.materialTemps ?? {};
   } catch (e) {
     console.warn('Config nicht geladen', e);
   }
-  connect();
+  window.electronNFC.onEvent(handleEvent);
 }
 
 init();
