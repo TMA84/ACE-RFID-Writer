@@ -1,0 +1,21 @@
+name: ACE RFID Writer
+description: Anycubic ACE Filament-RFID-Tags per ACR122U beschreiben
+version: "1.0.0"
+slug: ace_rfid_writer
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+ports:
+  3000/tcp: 3000
+ports_description:
+  3000/tcp: Web UI
+ingress: true
+ingress_port: 3000
+privileged:
+  - SYS_RAWIO
+full_access: true
+options: {}
+schema: {}

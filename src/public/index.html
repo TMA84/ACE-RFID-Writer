@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACE RFID Writer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>ACE RFID Writer</h1>
+    <div class="status-bar">
+      <div class="status-item" id="readerStatus">
+        <span class="dot" id="readerDot"></span>
+        <span id="readerLabel">Reader nicht verbunden</span>
+      </div>
+      <div class="status-item" id="tagStatus">
+        <span class="dot" id="tagDot"></span>
+        <span id="tagLabel">Kein Tag</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <form id="filamentForm">
+
+      <section>
+        <h2>Filament</h2>
+        <div class="field-row">
+          <label for="brand">Hersteller</label>
+          <input id="brand" type="text" placeholder="z.B. Bambu Lab" maxlength="20">
+        </div>
+        <div class="field-row">
+          <label for="material">Material</label>
+          <select id="material">
+            <option value="">— wählen —</option>
+            <option>PLA</option>
+            <option>PLA+</option>
+            <option>PETG</option>
+            <option>ABS</option>
+            <option>ASA</option>
+            <option>TPU</option>
+            <option>PA</option>
+            <option>PA-CF</option>
+            <option>PC</option>
+            <option>HIPS</option>
+            <option>PVA</option>
+            <option>SILK</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <label for="sku">SKU / Artikelnummer</label>
+          <input id="sku" type="text" placeholder="optional" maxlength="20">
+        </div>
+        <div class="field-row">
+          <label for="weight">Gewicht</label>
+          <select id="weight">
+            <option value="1000">1 kg (330 m)</option>
+            <option value="750">750 g (247 m)</option>
+            <option value="600">600 g (198 m)</option>
+            <option value="500">500 g (165 m)</option>
+            <option value="250">250 g (82 m)</option>
+          </select>
+        </div>
+      </section>
+
+      <section>
+        <h2>Farbe</h2>
+        <div class="field-row color-row">
+          <label for="colorPicker">Farbe wählen</label>
+          <div class="color-controls">
+            <input id="colorPicker" type="color" value="#ffffff">
+            <input id="colorHex" type="text" placeholder="#RRGGBB" maxlength="7" class="color-hex">
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Temperaturen</h2>
+        <div class="temp-grid">
+          <div class="temp-group">
+            <h3>Düse</h3>
+            <div class="field-row">
+              <label for="extruderMin">Min (°C)</label>
+              <input id="extruderMin" type="number" min="100" max="400" value="190">
+            </div>
+            <div class="field-row">
+              <label for="extruderMax">Max (°C)</label>
+              <input id="extruderMax" type="number" min="100" max="400" value="230">
+            </div>
+          </div>
+          <div class="temp-group">
+            <h3>Bett</h3>
+            <div class="field-row">
+              <label for="bedMin">Min (°C)</label>
+              <input id="bedMin" type="number" min="0" max="150" value="50">
+            </div>
+            <div class="field-row">
+              <label for="bedMax">Max (°C)</label>
+              <input id="bedMax" type="number" min="0" max="150" value="60">
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </form>
+
+    <div class="actions">
+      <button id="btnRead" class="btn btn-secondary" disabled>Tag lesen</button>
+      <button id="btnWrite" class="btn btn-primary" disabled>Auf Tag schreiben</button>
+    </div>
+
+    <div id="toast" class="toast hidden"></div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+services:
+  ace-rfid-writer:
+    build: .
+    ports:
+      - "3000:3000"
+    # USB access for ACR122U
+    privileged: true
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+    restart: unless-stopped
