@@ -14,7 +14,7 @@
     "build:win": "electron-builder --win",
     "build:linux": "electron-builder --linux",
     "rebuild": "electron-rebuild -f -w nfc-pcsc",
-    "postinstall": "electron-rebuild -f -w nfc-pcsc"
+    "postinstall": "node -e \"if (!process.env.CI) require('child_process').execSync('electron-rebuild -f -w nfc-pcsc', {stdio:'inherit'});\""
   },
   "dependencies": {
     "nfc-pcsc": "^0.8.0"
