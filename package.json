@@ -28,6 +28,10 @@
       "target": "dmg",
       "icon": "build/icon.icns"
     },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Utility"
+    },
     "files": [
       "main.js",
       "preload.js",
