@@ -2,8 +2,14 @@
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
-const { NFC } = require('nfc-pcsc');
 const { encode, decode, MATERIAL_TEMPS, WEIGHT_TO_LENGTH } = require('./src/tagFormat');
+
+let NFC;
+try {
+  NFC = require('nfc-pcsc').NFC;
+} catch (e) {
+  console.error('nfc-pcsc load error:', e.message);
+}
 
 let win           = null;
 let currentReader = null;
@@ -30,10 +36,21 @@ function createWindow() {
   });
 
   win.loadFile('src/public/index.html');
+
+  // Aktuellen Reader/Tag-Zustand senden sobald Renderer bereit ist
+  win.webContents.on('did-finish-load', () => {
+    if (currentReader) send({ type: 'reader_connected', name: currentReader.name });
+    else               send({ type: 'reader_disconnected' });
+    if (currentCard)   send({ type: 'tag_detected', uid: currentCard.uid });
+  });
 }
 
 // --- NFC ---
 function initNFC() {
+  if (!NFC) {
+    send({ type: 'error', message: 'NFC-Modul konnte nicht geladen werden — bitte Terminal prüfen' });
+    return;
+  }
   const nfc = new NFC();
 
   nfc.on('reader', reader => {
