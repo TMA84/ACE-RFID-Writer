@@ -2,6 +2,10 @@
   "name": "ace-rfid-writer",
   "version": "1.0.0",
   "description": "Anycubic ACE filament RFID tag writer",
+  "author": {
+    "name": "TMA84",
+    "email": "tobias.malcherek@gmail.com"
+  },
   "main": "main.js",
   "scripts": {
     "start": "electron .",
