@@ -12,9 +12,7 @@ const btnWrite    = document.getElementById('btnWrite');
 const toast       = document.getElementById('toast');
 
 const fields = {
-  brandSelect:     document.getElementById('brandSelect'),
-  brandCustom:     document.getElementById('brandCustom'),
-  brandCustomRow:  document.getElementById('brandCustomRow'),
+  brand:       document.getElementById('brand'),
   material:    document.getElementById('material'),
   sku:         document.getElementById('sku'),
   weight:      document.getElementById('weight'),
@@ -82,13 +80,6 @@ fields.colorHex.addEventListener('input', () => {
   }
 });
 
-// --- Brand select ---
-fields.brandSelect.addEventListener('change', () => {
-  const isCustom = fields.brandSelect.value === '__custom__';
-  fields.brandCustomRow.style.display = isCustom ? '' : 'none';
-  if (isCustom) fields.brandCustom.focus();
-});
-
 // --- Material auto-fill ---
 fields.material.addEventListener('change', () => {
   const temps = materialTemps[fields.material.value];
@@ -102,12 +93,9 @@ fields.material.addEventListener('change', () => {
 // --- Form → payload ---
 function getPayload() {
   const rgb = hexToRgb(fields.colorHex.value || fields.colorPicker.value) ?? { r: 255, g: 255, b: 255 };
-  const brand = fields.brandSelect.value === '__custom__'
-    ? fields.brandCustom.value.trim()
-    : fields.brandSelect.value;
   return {
     sku:         fields.sku.value.trim(),
-    brand,
+    brand:       fields.brand.value.trim(),
     material:    fields.material.value,
     colorR:      rgb.r,
     colorG:      rgb.g,
@@ -122,9 +110,7 @@ function getPayload() {
 
 // --- Clear form ---
 function clearForm() {
-  fields.brandSelect.value          = '';
-  fields.brandCustom.value          = '';
-  fields.brandCustomRow.style.display = 'none';
+  fields.brand.value       = '';
   fields.sku.value         = '';
   fields.material.value    = '';
   fields.weight.value      = '1000';
@@ -138,16 +124,7 @@ function clearForm() {
 
 // --- Populate form ---
 function populateForm(data) {
-  const brand = data.brand ?? '';
-  const knownOpt = [...fields.brandSelect.options].find(o => o.value === brand && o.value !== '__custom__');
-  if (knownOpt) {
-    fields.brandSelect.value          = brand;
-    fields.brandCustomRow.style.display = 'none';
-  } else if (brand) {
-    fields.brandSelect.value          = '__custom__';
-    fields.brandCustom.value          = brand;
-    fields.brandCustomRow.style.display = '';
-  }
+  fields.brand.value       = data.brand       ?? '';
   fields.sku.value         = data.sku         ?? '';
   fields.extruderMin.value = data.extruderMin ?? 190;
   fields.extruderMax.value = data.extruderMax ?? 230;
