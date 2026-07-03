@@ -1,6 +1,6 @@
 {
   "name": "ace-rfid-writer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Anycubic ACE filament RFID tag writer",
   "author": {
     "name": "TMA84",
