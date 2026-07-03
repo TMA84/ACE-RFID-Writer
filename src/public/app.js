@@ -13,6 +13,99 @@ const BRANDS = [
   'Sunlu','Ultimaker','Verbatim','Voxelab','XYZprinting','ZIRO','Zortrax',
 ];
 
+const BRAND_TEMPS = {
+  'Bambu Lab': {
+    PLA:    { extruderMin: 210, extruderMax: 230, bedMin: 35,  bedMax: 45  },
+    'PLA+': { extruderMin: 215, extruderMax: 235, bedMin: 35,  bedMax: 45  },
+    PETG:   { extruderMin: 240, extruderMax: 270, bedMin: 70,  bedMax: 80  },
+    ABS:    { extruderMin: 260, extruderMax: 270, bedMin: 90,  bedMax: 110 },
+    ASA:    { extruderMin: 260, extruderMax: 270, bedMin: 90,  bedMax: 110 },
+    PA:     { extruderMin: 270, extruderMax: 280, bedMin: 70,  bedMax: 80  },
+    'PA-CF':{ extruderMin: 280, extruderMax: 300, bedMin: 80,  bedMax: 90  },
+    TPU:    { extruderMin: 220, extruderMax: 240, bedMin: 20,  bedMax: 40  },
+  },
+  'Prusament': {
+    PLA:    { extruderMin: 210, extruderMax: 230, bedMin: 50,  bedMax: 60  },
+    PETG:   { extruderMin: 240, extruderMax: 260, bedMin: 80,  bedMax: 90  },
+    ABS:    { extruderMin: 250, extruderMax: 265, bedMin: 100, bedMax: 110 },
+    ASA:    { extruderMin: 250, extruderMax: 265, bedMin: 100, bedMax: 110 },
+  },
+  'Polymaker': {
+    PLA:    { extruderMin: 190, extruderMax: 230, bedMin: 25,  bedMax: 60  },
+    'PLA+': { extruderMin: 200, extruderMax: 235, bedMin: 25,  bedMax: 60  },
+    PETG:   { extruderMin: 230, extruderMax: 250, bedMin: 70,  bedMax: 85  },
+    ASA:    { extruderMin: 240, extruderMax: 260, bedMin: 90,  bedMax: 110 },
+    PC:     { extruderMin: 250, extruderMax: 280, bedMin: 90,  bedMax: 120 },
+    TPU:    { extruderMin: 215, extruderMax: 235, bedMin: 25,  bedMax: 60  },
+  },
+  'eSUN': {
+    PLA:    { extruderMin: 190, extruderMax: 220, bedMin: 25,  bedMax: 60  },
+    'PLA+': { extruderMin: 200, extruderMax: 230, bedMin: 25,  bedMax: 60  },
+    PETG:   { extruderMin: 230, extruderMax: 250, bedMin: 70,  bedMax: 85  },
+    ABS:    { extruderMin: 230, extruderMax: 250, bedMin: 80,  bedMax: 110 },
+    TPU:    { extruderMin: 220, extruderMax: 235, bedMin: 30,  bedMax: 40  },
+    SILK:   { extruderMin: 210, extruderMax: 230, bedMin: 40,  bedMax: 60  },
+  },
+  'Hatchbox': {
+    PLA:    { extruderMin: 180, extruderMax: 220, bedMin: 40,  bedMax: 60  },
+    PETG:   { extruderMin: 230, extruderMax: 250, bedMin: 60,  bedMax: 80  },
+    ABS:    { extruderMin: 210, extruderMax: 240, bedMin: 80,  bedMax: 110 },
+    TPU:    { extruderMin: 210, extruderMax: 230, bedMin: 20,  bedMax: 40  },
+  },
+  'Sunlu': {
+    PLA:    { extruderMin: 190, extruderMax: 220, bedMin: 25,  bedMax: 60  },
+    PETG:   { extruderMin: 230, extruderMax: 260, bedMin: 70,  bedMax: 80  },
+    ABS:    { extruderMin: 230, extruderMax: 260, bedMin: 80,  bedMax: 110 },
+    TPU:    { extruderMin: 210, extruderMax: 230, bedMin: 20,  bedMax: 40  },
+    SILK:   { extruderMin: 210, extruderMax: 230, bedMin: 35,  bedMax: 55  },
+  },
+  'Overture': {
+    PLA:    { extruderMin: 190, extruderMax: 220, bedMin: 50,  bedMax: 60  },
+    PETG:   { extruderMin: 230, extruderMax: 250, bedMin: 70,  bedMax: 80  },
+    ABS:    { extruderMin: 230, extruderMax: 260, bedMin: 85,  bedMax: 110 },
+    TPU:    { extruderMin: 220, extruderMax: 230, bedMin: 0,   bedMax: 40  },
+  },
+  'Extrudr': {
+    PLA:    { extruderMin: 200, extruderMax: 220, bedMin: 20,  bedMax: 60  },
+    'PLA+': { extruderMin: 205, extruderMax: 225, bedMin: 20,  bedMax: 60  },
+    PETG:   { extruderMin: 235, extruderMax: 250, bedMin: 60,  bedMax: 80  },
+    ABS:    { extruderMin: 230, extruderMax: 260, bedMin: 80,  bedMax: 100 },
+    TPU:    { extruderMin: 210, extruderMax: 230, bedMin: 0,   bedMax: 40  },
+    PA:     { extruderMin: 255, extruderMax: 275, bedMin: 70,  bedMax: 90  },
+  },
+  'Das Filament': {
+    PLA:    { extruderMin: 195, extruderMax: 220, bedMin: 15,  bedMax: 60  },
+    PETG:   { extruderMin: 225, extruderMax: 250, bedMin: 50,  bedMax: 80  },
+  },
+  'Fillamentum': {
+    PLA:    { extruderMin: 200, extruderMax: 220, bedMin: 50,  bedMax: 60  },
+    PETG:   { extruderMin: 230, extruderMax: 250, bedMin: 70,  bedMax: 85  },
+    ABS:    { extruderMin: 250, extruderMax: 270, bedMin: 100, bedMax: 110 },
+    ASA:    { extruderMin: 250, extruderMax: 270, bedMin: 100, bedMax: 110 },
+    TPU:    { extruderMin: 220, extruderMax: 235, bedMin: 30,  bedMax: 50  },
+  },
+  'Creality': {
+    PLA:    { extruderMin: 190, extruderMax: 220, bedMin: 45,  bedMax: 60  },
+    PETG:   { extruderMin: 230, extruderMax: 250, bedMin: 70,  bedMax: 85  },
+    ABS:    { extruderMin: 230, extruderMax: 250, bedMin: 80,  bedMax: 110 },
+    TPU:    { extruderMin: 210, extruderMax: 230, bedMin: 20,  bedMax: 40  },
+  },
+  'Elegoo': {
+    PLA:    { extruderMin: 190, extruderMax: 220, bedMin: 25,  bedMax: 60  },
+    PETG:   { extruderMin: 230, extruderMax: 250, bedMin: 70,  bedMax: 85  },
+    ABS:    { extruderMin: 230, extruderMax: 250, bedMin: 80,  bedMax: 110 },
+    ASA:    { extruderMin: 240, extruderMax: 260, bedMin: 90,  bedMax: 110 },
+    TPU:    { extruderMin: 215, extruderMax: 235, bedMin: 20,  bedMax: 40  },
+  },
+  'Anycubic': {
+    PLA:    { extruderMin: 190, extruderMax: 220, bedMin: 25,  bedMax: 60  },
+    PETG:   { extruderMin: 230, extruderMax: 250, bedMin: 70,  bedMax: 85  },
+    ABS:    { extruderMin: 230, extruderMax: 260, bedMin: 80,  bedMax: 110 },
+    ASA:    { extruderMin: 240, extruderMax: 260, bedMin: 90,  bedMax: 110 },
+    TPU:    { extruderMin: 215, extruderMax: 235, bedMin: 20,  bedMax: 40  },
+  },
+};
+
 // --- DOM ---
 const readerDot   = document.getElementById('readerDot');
 const readerLabel = document.getElementById('readerLabel');
@@ -112,7 +205,7 @@ fields.colorHex.addEventListener('input', () => {
 
   function hide() { dropdown.classList.add('hidden'); activeIdx = -1; }
 
-  function select(name) { input.value = name; hide(); }
+  function select(name) { input.value = name; hide(); applyTemps(); }
 
   function setActive(idx) {
     const items = dropdown.querySelectorAll('li');
@@ -146,15 +239,20 @@ fields.colorHex.addEventListener('input', () => {
   });
 })();
 
-// --- Material auto-fill ---
-fields.material.addEventListener('change', () => {
-  const temps = materialTemps[fields.material.value];
+// --- Temperature auto-fill (brand-specific overrides material defaults) ---
+function applyTemps() {
+  const mat = fields.material.value;
+  if (!mat) return;
+  const brand = fields.brand.value.trim();
+  const temps = (BRAND_TEMPS[brand] && BRAND_TEMPS[brand][mat]) || materialTemps[mat];
   if (!temps) return;
   fields.extruderMin.value = temps.extruderMin;
   fields.extruderMax.value = temps.extruderMax;
   fields.bedMin.value      = temps.bedMin;
   fields.bedMax.value      = temps.bedMax;
-});
+}
+
+fields.material.addEventListener('change', applyTemps);
 
 // --- Form → payload ---
 function getPayload() {
