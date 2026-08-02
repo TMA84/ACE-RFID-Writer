@@ -4,16 +4,38 @@ const express = require('express');
 const { WebSocketServer } = require('ws');
 const { NFC } = require('nfc-pcsc');
 const path = require('path');
+const fs = require('fs');
 const { encode, decode, MATERIAL_TEMPS, WEIGHT_TO_LENGTH } = require('./tagFormat');
+const spoolman = require('./spoolmanClient');
+
+// Home Assistant add-ons expose configured options via /data/options.json rather than env vars.
+function readHaOption(key) {
+  try {
+    const options = JSON.parse(fs.readFileSync('/data/options.json', 'utf8'));
+    return options[key] || '';
+  } catch {
+    return '';
+  }
+}
 
 const PORT = process.env.PORT || 3000;
+const SPOOLMAN_URL = process.env.SPOOLMAN_URL || readHaOption('spoolman_url');
 const app = express();
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 
 // Expose static config to frontend
 app.get('/api/config', (_req, res) => {
-  res.json({ materialTemps: MATERIAL_TEMPS, weightOptions: WEIGHT_TO_LENGTH });
+  res.json({ materialTemps: MATERIAL_TEMPS, weightOptions: WEIGHT_TO_LENGTH, spoolmanEnabled: Boolean(SPOOLMAN_URL) });
+});
+
+app.get('/api/spoolman/spools', async (_req, res) => {
+  try {
+    res.json(await spoolman.getSpools(SPOOLMAN_URL));
+  } catch (err) {
+    res.status(502).json({ message: err.message });
+  }
 });
 
 const server = app.listen(PORT, '0.0.0.0', () => {
@@ -114,9 +136,10 @@ wss.on('connection', ws => {
       }
       try {
         const buf = encode(msg.fields);
+        const uid = currentCard.uid;
         await currentReader.write(4, buf, 4);
         send(ws, { type: 'write_success' });
-        console.log(`Tag written: ${currentCard.uid} → ${msg.fields.material} ${msg.fields.brand}`);
+        console.log(`Tag written: ${uid} → ${msg.fields.material} ${msg.fields.brand}`);
       } catch (err) {
         send(ws, { type: 'error', message: `Schreiben fehlgeschlagen: ${err.message}` });
       }

@@ -17,5 +17,7 @@ ingress_port: 3000
 privileged:
   - SYS_RAWIO
 full_access: true
-options: {}
-schema: {}
+options:
+  spoolman_url: ""
+schema:
+  spoolman_url: "str?"

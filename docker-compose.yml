@@ -3,6 +3,9 @@ services:
     build: .
     ports:
       - "3000:3000"
+    environment:
+      # URL of your Spoolman instance, e.g. http://spoolman:7912 — leave empty to disable the integration
+      - SPOOLMAN_URL=
     # USB access for ACR122U
     privileged: true
     volumes:

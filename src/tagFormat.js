@@ -69,9 +69,12 @@ function encode(fields) {
   let g = fields.colorG ?? 0;
   let b = fields.colorB ?? 0;
   if (r === 0 && g === 0 && b === 0) { r = 1; g = 1; b = 1; }
-  buf[65] = r;
+  // Byte order at 65-67 is B,G,R, not R,G,B - confirmed live by comparing our decode of a genuine
+  // Anycubic tag against the ACE Pro's own gate_color for the same physical spool: green matched,
+  // red/blue were exactly swapped.
+  buf[65] = b;
   buf[66] = g;
-  buf[67] = b;
+  buf[67] = r;
 
   buf.writeUInt16LE(fields.extruderMin ?? 190, 80);
   buf.writeUInt16LE(fields.extruderMax ?? 230, 82);

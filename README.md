@@ -41,6 +41,20 @@ docker compose up --build
 
 Das Add-on nutzt `privileged: true`, damit Docker auf den USB-Port zugreifen kann.
 
+## Spoolman-Anbindung
+
+Statt Material/Farbe/Temperaturen manuell einzutragen, kann eine Spule direkt aus
+[Spoolman](https://github.com/Donkie/Spoolman) geladen werden.
+
+**Aktivieren:**
+- Mac/lokal: `SPOOLMAN_URL=http://localhost:7912 npm start`
+- Docker: `SPOOLMAN_URL` in `docker-compose.yml` setzen
+- Home Assistant Add-on: Option `spoolman_url` in der Add-on-Konfiguration setzen
+
+Ist `SPOOLMAN_URL` gesetzt, erscheint oben im Formular ein Dropdown "Spule laden". Nach Auswahl
+werden Hersteller, Material, Farbe, Temperaturen (sofern in Spoolman hinterlegt, sonst über die
+bestehenden Marken-/Material-Presets) und das nächstgelegene Gewicht-Bucket automatisch befüllt.
+
 ## Tag-Format (Anycubic ACE)
 
 144 Bytes ab NTAG-Block 4:

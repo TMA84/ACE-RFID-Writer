@@ -1,6 +1,6 @@
 {
   "name": "ace-rfid-writer",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Anycubic ACE filament RFID tag writer",
   "author": {
     "name": "TMA84",
@@ -17,7 +17,9 @@
     "postinstall": "node -e \"if (!process.env.CI) require('child_process').execSync('electron-rebuild -f -w nfc-pcsc', {stdio:'inherit'});\""
   },
   "dependencies": {
-    "nfc-pcsc": "^0.8.0"
+    "nfc-pcsc": "^0.8.0",
+    "express": "^4.19.2",
+    "ws": "^8.17.0"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.4.0",
@@ -40,6 +42,7 @@
       "main.js",
       "preload.js",
       "src/tagFormat.js",
+      "src/spoolmanClient.js",
       "src/public/**"
     ]
   }

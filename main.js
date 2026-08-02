@@ -3,6 +3,9 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const { encode, decode, MATERIAL_TEMPS, WEIGHT_TO_LENGTH } = require('./src/tagFormat');
+const spoolman = require('./src/spoolmanClient');
+
+const SPOOLMAN_URL = process.env.SPOOLMAN_URL || '';
 
 let NFC;
 try {
@@ -94,7 +97,10 @@ function initNFC() {
 ipcMain.handle('get-config', () => ({
   materialTemps: MATERIAL_TEMPS,
   weightOptions: WEIGHT_TO_LENGTH,
+  spoolmanEnabled: Boolean(SPOOLMAN_URL),
 }));
+
+ipcMain.handle('spoolman-get-spools', async () => spoolman.getSpools(SPOOLMAN_URL));
 
 ipcMain.on('nfc-action', async (_event, msg) => {
   if (!currentReader || !currentCard) {

@@ -397,6 +397,70 @@ const BRAND_TEMPS = {
   },
 };
 
+// --- Spoolman ---
+let spoolmanSpools = new Map();
+let currentSpoolId = null;
+
+const spoolmanSection = document.getElementById('spoolmanSection');
+const spoolmanSelect  = document.getElementById('spoolmanSelect');
+
+async function loadSpoolmanSpools() {
+  try {
+    const spools = await window.electronNFC.getSpoolmanSpools();
+    spoolmanSpools = new Map(spools.map((s) => [String(s.id), s]));
+    spoolmanSelect.innerHTML = '<option value="">— Spule wählen —</option>';
+    for (const spool of spools) {
+      const opt = document.createElement('option');
+      opt.value = String(spool.id);
+      opt.textContent = `${spool.label} (${spool.material || '?'}, ${spool.weightG} g)`;
+      spoolmanSelect.appendChild(opt);
+    }
+  } catch (err) {
+    showToast(`Spoolman-Spulen konnten nicht geladen werden: ${err.message}`, 'error');
+  }
+}
+
+function populateFromSpoolman(spool) {
+  fields.brand.value = spool.brand || '';
+  fields.sku.value   = spool.sku   || '';
+
+  if (spool.material) {
+    const opt = [...fields.material.options].find((o) => o.value === spool.material);
+    if (opt) fields.material.value = spool.material;
+  }
+
+  if (spool.colorHex) {
+    const hex = `#${spool.colorHex.slice(0, 6)}`;
+    if (/^#[0-9a-fA-F]{6}$/.test(hex)) {
+      fields.colorPicker.value = hex.toLowerCase();
+      fields.colorHex.value    = hex.toUpperCase();
+    }
+  }
+
+  const opt = [...fields.weight.options].find((o) => o.value === String(spool.weightG));
+  if (opt) fields.weight.value = String(spool.weightG);
+
+  // Single-value Spoolman temps take precedence over brand/material presets.
+  if (spool.extruderTemp) {
+    fields.extruderMin.value = Math.max(0, spool.extruderTemp - 5);
+    fields.extruderMax.value = spool.extruderTemp + 5;
+  }
+  if (spool.bedTemp) {
+    fields.bedMin.value = Math.max(0, spool.bedTemp - 5);
+    fields.bedMax.value = spool.bedTemp + 5;
+  }
+  if (!spool.extruderTemp || !spool.bedTemp) {
+    applyTemps(); // fills in whichever of the two wasn't set from Spoolman, from BRAND_TEMPS/MATERIAL_TEMPS
+  }
+}
+
+spoolmanSelect.addEventListener('change', () => {
+  currentSpoolId = spoolmanSelect.value || null;
+  if (!currentSpoolId) return;
+  const spool = spoolmanSpools.get(currentSpoolId);
+  if (spool) populateFromSpoolman(spool);
+});
+
 // --- DOM ---
 const readerDot   = document.getElementById('readerDot');
 const readerLabel = document.getElementById('readerLabel');
@@ -607,7 +671,7 @@ function handleEvent(msg) {
     case 'reader_connected':    setReaderStatus(true, msg.name);      break;
     case 'reader_disconnected': setReaderStatus(false);                break;
     case 'tag_detected':        setTagStatus(true, msg.uid);           break;
-    case 'tag_removed':         setTagStatus(false); clearForm();       break;
+    case 'tag_removed':         setTagStatus(false); clearForm(); currentSpoolId = null; spoolmanSelect.value = ''; break;
     case 'tag_data':            populateForm(msg.fields); showToast('Tag gelesen'); break;
     case 'write_success':       showToast('Tag erfolgreich beschrieben'); break;
     case 'error':               showToast(msg.message, 'error');       break;
@@ -625,7 +689,7 @@ btnWrite.addEventListener('click', () => {
     showToast('Bitte Material wählen', 'error');
     return;
   }
-  window.electronNFC.send('write', { fields: payload });
+  window.electronNFC.send('write', { fields: payload, spoolId: currentSpoolId });
 });
 
 // --- Init ---
@@ -633,6 +697,10 @@ async function init() {
   try {
     const conf  = await window.electronNFC.getConfig();
     materialTemps = conf.materialTemps ?? {};
+    if (conf.spoolmanEnabled) {
+      spoolmanSection.classList.remove('hidden');
+      loadSpoolmanSpools();
+    }
   } catch (e) {
     console.warn('Config nicht geladen', e);
   }
