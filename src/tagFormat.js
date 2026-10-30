@@ -87,7 +87,8 @@ function encode(fields) {
 }
 
 function decode(buf) {
-  const r = buf[65], g = buf[66], b = buf[67];
+  // B,G,R order - must mirror encode(), otherwise a read→write round trip swaps red/blue
+  const b = buf[65], g = buf[66], r = buf[67];
   // Reverse black workaround on read
   const isBlack = r === 1 && g === 1 && b === 1;
 
